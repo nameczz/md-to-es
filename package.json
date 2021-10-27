@@ -1,0 +1,15 @@
+{
+  "name": "md-to-es",
+  "version": "0.1.0",
+  "description": "format markdown then update to es",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "md-to-es"
+  },
+  "author": "nameczz",
+  "license": "ISC"
+}
