@@ -11,5 +11,8 @@
     "url": "md-to-es"
   },
   "author": "nameczz",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
 }

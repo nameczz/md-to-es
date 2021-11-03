@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+  </script>
+  <style>
+    em {
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <h2 style="margin-bottom:20px">Search Demo</h2>
+
+
+
+
+  <p>英文：<input id="search" /></p>
+
+  <p>中文: <input id="search-cn" /></p>
+
+  <div id="content"></div>
+</body>
+<script>
+  jQuery(document).ready(function ($) {
+    console.log(document.querySelector("#search"))
+    var timeId = null
+    document.querySelector("#search").addEventListener("input", (e) => {
+      var val = $('#search').val()
+      var url = 'https://search.zilliz.com/search'
+      var data = {
+        "index": "productname-v2.0.0-en",
+        "body": {
+          "_source": [
+            "title",
+            "language",
+            "name",
+            "version"
+          ],
+          "query": {
+            "multi_match": {
+              "fields": [
+                "content",
+              ],
+              "query": val,
+              "fuzziness": "AUTO"
+            }
+          },
+          "highlight": {
+            "fields": {
+              "content": {
+                "fragment_size": 500,
+                "number_of_fragments": 1
+              }
+            }
+          }
+        }
+      }
+      if (timeId) {
+        clearTimeout(timeId)
+      }
+      timeId = setTimeout(async () => {
+        const res = await fetch(url, {
+          body: JSON.stringify(data), // must match 'Content-Type' header
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        })
+        const result = await res.json()
+        console.log(result)
+        if (result.statusCode === 200) {
+          const docs = result.body.hits.hits
+          const total = result.body.hits.total.value
+          let html = `<p>All results: ${total}</p>`
+          docs.forEach(v => {
+            html += `<div>
+            <h2> ${v._source.name} ${v._source.version} ${v._source.language} </h2>
+            <p>${v.highlight.content[0]}</p>
+            </div>`
+          })
+          $('#content').html(html)
+        }
+      }, 600)
+
+    })
+
+
+    document.querySelector("#search-cn").addEventListener("input", (e) => {
+      var val = $('#search-cn').val()
+      var url = 'https://search.zilliz.com/search'
+      var data = {
+        "index": "productname-v2.0.0-cn",
+        "body": {
+          "_source": [
+            "title",
+            "language",
+            "name",
+            "version"
+          ],
+          "query": {
+            "multi_match": {
+              "fields": [
+                "content",
+              ],
+              "query": val,
+              "fuzziness": "AUTO"
+            }
+          },
+          "highlight": {
+            "fields": {
+              "content": {
+                "fragment_size": 500,
+                "number_of_fragments": 1
+              }
+            }
+          }
+        }
+      }
+      if (timeId) {
+        clearTimeout(timeId)
+      }
+      timeId = setTimeout(async () => {
+        const res = await fetch(url, {
+          body: JSON.stringify(data), // must match 'Content-Type' header
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        })
+        const result = await res.json()
+        console.log(result)
+        if (result.statusCode === 200) {
+          const docs = result.body.hits.hits
+          const total = result.body.hits.total.value
+          let html = `<p>All results: ${total}</p>`
+          docs.forEach(v => {
+            html += `<div>
+            <h2> ${v._source.name} ${v._source.version} ${v._source.language} </h2>
+            <p>${v.highlight.content[0]}</p>
+            </div>`
+          })
+          $('#content').html(html)
+        }
+      }, 600)
+
+    })
+    // All your code using $
+
+  });
+
+</script>
+
+</html>
